@@ -126,11 +126,50 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:52px 24p
 .f-copy{font-size:12px;color:var(--light)}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1)}
 .reveal.visible{opacity:1;transform:none}
-.reveal-d1{transition-delay:.08s}
-.reveal-d2{transition-delay:.16s}
-.reveal-d3{transition-delay:.24s}
+.reveal-d1{transition-delay:.1s}
+.reveal-d2{transition-delay:.2s}
+.reveal-d3{transition-delay:.3s}
+
+/* MAGNETIC CARDS */
+.srv-card{transition:background .2s,transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s}
+.srv-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.work-card{transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
+.work-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 24px 60px rgba(0,0,0,.14)}
+
+/* STAT COUNTER */
+.hs-n{display:inline-block}
+
+/* SECTION TITLE UNDERLINE */
+.section-title{position:relative;display:inline-block}
+
+/* SMOOTH SCROLL INDICATOR */
+@keyframes floatDown{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.scroll-ind{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:floatDown 2s ease-in-out infinite;opacity:.35}
+.scroll-ind span{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.08em}
+.scroll-ind svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
+
+/* PAGE TRANSITION OVERLAY */
+.page-flash{position:fixed;inset:0;background:#fff;z-index:9999;pointer-events:none;opacity:0}
+
+/* HOVER LINE on nav links */
+.nav-links a{position:relative;padding-bottom:2px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--dark);transition:width .25s cubic-bezier(.16,1,.3,1)}
+.nav-links a:hover::after{width:100%}
+
+/* BUTTON press */
+.btn-p,.btn-s,.cta-btn-p,.cta-btn-s{transition:transform .15s,background .2s,opacity .2s}
+.btn-p:active,.btn-s:active,.cta-btn-p:active,.cta-btn-s:active{transform:scale(.97)}
+
+/* STAGGER from left for how-steps */
+.how-step{overflow:hidden}
+.how-step::before{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent);transition:width .5s cubic-bezier(.16,1,.3,1)}
+.how-step:hover::before{width:100%}
+.how-step{position:relative}
+
+/* NUMBER GLOW on hover */
+.hstat:hover .hs-n{color:var(--accent);transition:color .3s}
 
 /* RESPONSIVE */
 @media(max-width:900px){
@@ -170,19 +209,11 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:52px 24p
     <a href="#contatto" class="btn-s">Parlaci del tuo progetto</a>
   </div>
   <div class="hero-stats">
-    <div>
-      <span class="hs-n">12<span>+</span></span>
-      <div class="hs-l">Progetti completati</div>
-    </div>
-    <div>
-      <span class="hs-n">48<span>h</span></span>
-      <div class="hs-l">Consegna media</div>
-    </div>
-    <div>
-      <span class="hs-n">100<span>%</span></span>
-      <div class="hs-l">Clienti soddisfatti</div>
-    </div>
+    <div class="hstat"><span class="hs-n counter" data-target="12" data-suffix="+">0+</span><div class="hs-l">Progetti completati</div></div>
+    <div class="hstat"><span class="hs-n counter" data-target="48" data-suffix="h">0h</span><div class="hs-l">Consegna media</div></div>
+    <div class="hstat"><span class="hs-n counter" data-target="100" data-suffix="%">0%</span><div class="hs-l">Clienti soddisfatti</div></div>
   </div>
+  <div class="scroll-ind"><span>scroll</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
 </section>
 
 <!-- SERVICES -->
@@ -298,8 +329,42 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:52px 24p
 </footer>
 
 <script>
-const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.1});
+// Reveal
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Counter animation
+function animCount(el){
+  const target=+el.dataset.target, suffix=el.dataset.suffix||'', dur=1400;
+  const start=performance.now();
+  const ease=t=>1-Math.pow(1-t,4);
+  (function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    el.textContent=Math.round(ease(p)*target)+suffix;
+    if(p<1)requestAnimationFrame(tick);
+  })(start);
+}
+const cObs=new IntersectionObserver(e=>e.forEach(x=>{
+  if(x.isIntersecting){animCount(x.target);cObs.unobserve(x.target);}
+}),{threshold:.5});
+document.querySelectorAll('.counter').forEach(el=>cObs.observe(el));
+
+// Magnetic buttons (subtle)
+document.querySelectorAll('.btn-p,.btn-s,.nav-cta').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=(e.clientX-r.left-r.width/2)*.15;
+    const y=(e.clientY-r.top-r.height/2)*.15;
+    btn.style.transform=`translate(${x}px,${y}px)`;
+  });
+  btn.addEventListener('mouseleave',()=>btn.style.transform='');
+});
+
+// Hide scroll indicator on scroll
+window.addEventListener('scroll',()=>{
+  const ind=document.querySelector('.scroll-ind');
+  if(ind)ind.style.opacity=window.scrollY>80?'0':'0.35';
+},{passive:true});
 </script>
 </body>
 </html>
