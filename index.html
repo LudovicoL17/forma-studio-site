@@ -3,719 +3,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORMA — Digital Studio · Ticino</title>
+<title>FORMA — Digital Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#00000a;
-  --bg2:#020210;
-  --cyan:#00CFFF;
-  --cyan2:#0099CC;
-  --cyan-dim:rgba(0,207,255,.15);
-  --cyan-glow:rgba(0,207,255,.35);
-  --orange:#FF8C00;
-  --cream:#D0EEFF;
-  --muted:rgba(208,238,255,.4);
-  --muted2:rgba(208,238,255,.25);
-  --border:rgba(0,207,255,.12);
-  --border2:rgba(0,207,255,.25);
-  --grid-color:rgba(0,207,255,.06);
-}
+:root{--bg:#ffffff;--bg2:#f5f5f7;--dark:#1d1d1f;--mid:#424245;--muted:#6e6e73;--light:#a1a1a6;--accent:#0066cc;--accent2:#0077ed;--border:rgba(0,0,0,.08);--r:18px}
 html{scroll-behavior:smooth}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* ── CANVAS BG ── */
-#tron-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-size:17px;font-weight:700;letter-spacing:-.03em;color:var(--dark);text-decoration:none}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--dark)}
+.nav-cta{font-size:13px;font-weight:500;color:var(--accent);text-decoration:none;transition:color .2s}
+.nav-cta:hover{color:var(--accent2)}
 
-/* ── SCANLINES ── */
-.scanlines{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,10,.08) 3px,rgba(0,0,10,.08) 4px);
-  opacity:.5}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;background:var(--bg);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,204,.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none}
+.hero-eyebrow{font-size:13px;font-weight:500;color:var(--accent);letter-spacing:.01em;margin-bottom:20px;opacity:0;animation:fadeUp .8s .1s forwards}
+.hero-h1{font-size:clamp(48px,8vw,96px);font-weight:800;letter-spacing:-.04em;line-height:1.02;color:var(--dark);margin-bottom:24px;opacity:0;animation:fadeUp .8s .2s forwards;max-width:800px}
+.hero-h1 span{background:linear-gradient(135deg,var(--accent),#5ac8fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(17px,2.5vw,22px);font-weight:300;color:var(--muted);max-width:520px;line-height:1.6;margin-bottom:44px;opacity:0;animation:fadeUp .8s .3s forwards}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .4s forwards}
+.btn-p{padding:14px 28px;background:var(--accent);color:#fff;border-radius:980px;font-size:15px;font-weight:500;text-decoration:none;transition:background .2s,transform .15s;display:inline-block}
+.btn-p:hover{background:var(--accent2);transform:scale(1.02)}
+.btn-s{padding:13px 28px;background:rgba(0,102,204,.1);color:var(--accent);border-radius:980px;font-size:15px;font-weight:500;text-decoration:none;transition:background .2s;display:inline-block}
+.btn-s:hover{background:rgba(0,102,204,.16)}
+.hero-stats{display:flex;gap:64px;margin-top:80px;opacity:0;animation:fadeUp .8s .5s forwards}
+.hs-n{font-size:40px;font-weight:700;letter-spacing:-.03em;color:var(--dark);display:block;line-height:1}
+.hs-n span{color:var(--accent)}
+.hs-l{font-size:13px;color:var(--light);margin-top:4px;font-weight:400}
 
-/* ── CURSOR ── */
-.cursor{display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(0,0,10,.7);backdrop-filter:blur(20px)}
-.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream);text-decoration:none;display:flex;align-items:center;gap:10px}
-.nav-logo .dot{width:6px;height:6px;background:var(--cyan);border-radius:0;transform:rotate(45deg);box-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan-glow)}
-.nav-links{display:flex;gap:40px;list-style:none}
-.nav-links a{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;position:relative}
-.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:var(--cyan);transform:scaleX(0);transition:transform .2s;box-shadow:0 0 6px var(--cyan)}
-.nav-links a:hover{color:var(--cyan)}
-.nav-links a:hover::after{transform:scaleX(1)}
-.nav-cta{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--border2);padding:9px 22px;text-decoration:none;transition:all .2s;box-shadow:0 0 16px rgba(0,207,255,.08),inset 0 0 16px rgba(0,207,255,.03);position:relative}
-.nav-cta::before{content:'';position:absolute;inset:0;background:var(--cyan-dim);opacity:0;transition:opacity .2s}
-.nav-cta:hover{color:#fff;border-color:var(--cyan);box-shadow:0 0 24px var(--cyan-dim),inset 0 0 24px rgba(0,207,255,.08)}
-.nav-cta:hover::before{opacity:1}
+/* SECTIONS */
+section{padding:100px 24px}
+.inner{max-width:1080px;margin:0 auto}
+.section-eyebrow{font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1.05;color:var(--dark);margin-bottom:16px}
+.section-sub{font-size:17px;font-weight:300;color:var(--muted);line-height:1.6;max-width:520px;margin-bottom:56px}
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 48px 80px;position:relative;overflow:hidden}
-.hero-lines{position:absolute;inset:0;pointer-events:none}
-.hero-line{position:absolute;background:var(--cyan);opacity:.08}
-.hero-line.h{height:1px;width:100%;box-shadow:0 0 12px var(--cyan)}
-.hero-line.v{width:1px;height:100%;box-shadow:0 0 12px var(--cyan)}
-.hero-line.h1{top:30%}
-.hero-line.h2{top:70%}
-.hero-line.v1{left:15%}
-.hero-line.v2{right:15%}
-.hero-corner{position:absolute;width:24px;height:24px;border-color:var(--cyan);border-style:solid;opacity:.5}
-.hero-corner.tl{top:80px;left:48px;border-width:2px 0 0 2px;box-shadow:-4px -4px 12px rgba(0,207,255,.2)}
-.hero-corner.tr{top:80px;right:48px;border-width:2px 2px 0 0;box-shadow:4px -4px 12px rgba(0,207,255,.2)}
-.hero-corner.bl{bottom:80px;left:48px;border-width:0 0 2px 2px;box-shadow:-4px 4px 12px rgba(0,207,255,.2)}
-.hero-corner.br{bottom:80px;right:48px;border-width:0 2px 2px 0;box-shadow:4px 4px 12px rgba(0,207,255,.2)}
+/* SERVICES */
+.srv-sec{background:var(--bg2)}
+.srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.srv-card{background:var(--bg);padding:36px 32px;transition:background .2s;position:relative;overflow:hidden}
+.srv-card:first-child{border-radius:var(--r) 0 0 0}
+.srv-card:nth-child(3){border-radius:0 var(--r) 0 0}
+.srv-card:nth-child(4){border-radius:0 0 0 var(--r)}
+.srv-card:last-child{border-radius:0 0 var(--r) 0}
+.srv-card:hover{background:#fafafa}
+.srv-icon{font-size:28px;margin-bottom:16px;display:block}
+.srv-n{font-size:11px;font-weight:600;color:var(--light);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.srv-title{font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--dark);margin-bottom:8px}
+.srv-desc{font-size:14px;color:var(--muted);line-height:1.6}
+.srv-arrow{position:absolute;bottom:28px;right:28px;font-size:18px;color:var(--accent);opacity:0;transform:translate(-4px,4px);transition:all .2s}
+.srv-card:hover .srv-arrow{opacity:1;transform:none}
 
-.hero-badge{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;margin-bottom:40px;display:flex;align-items:center;gap:14px;justify-content:center;opacity:.8}
-.hero-badge::before,.hero-badge::after{content:'';width:40px;height:1px;background:var(--cyan);opacity:.5}
+/* WORK */
+.work-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.work-card{border-radius:var(--r);overflow:hidden;background:var(--bg2);position:relative;aspect-ratio:4/3;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.work-card:hover{transform:scale(1.015)}
+.wc-preview{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.wc-screen{width:75%;background:#fff;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.12);overflow:hidden}
+.wcs-bar{height:22px;background:#f5f5f7;display:flex;align-items:center;padding:0 10px;gap:5px;border-bottom:1px solid rgba(0,0,0,.06)}
+.wcs-dot{width:6px;height:6px;border-radius:50%}
+.wcs-body{padding:12px;display:flex;flex-direction:column;gap:6px}
+.wcs-line{height:6px;border-radius:3px;background:rgba(0,0,0,.07)}
+.wcs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:2px}
+.wcs-block{height:32px;border-radius:5px;background:rgba(0,0,0,.05)}
+.wc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)}
+.wc-meta{position:relative;z-index:1}
+.wc-cat{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.wc-title{font-size:22px;font-weight:700;letter-spacing:-.02em;color:#fff}
+.wc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.wc-tag{font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);backdrop-filter:blur(4px)}
 
-.hero-h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(64px,11vw,140px);line-height:.88;letter-spacing:-.01em;text-transform:uppercase;position:relative}
-.hero-h1 .w1{color:var(--cream)}
-.hero-h1 .w2{color:var(--cyan);text-shadow:0 0 40px rgba(0,207,255,.6),0 0 100px rgba(0,207,255,.25);display:block;position:relative}
-.hero-h1 .w2::before,.hero-h1 .w2::after{content:attr(data-text);position:absolute;top:0;left:0;right:0;overflow:hidden}
-.hero-h1 .w2::before{color:rgba(0,207,255,.8);animation:glitch1 4s infinite;clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%)}
-.hero-h1 .w2::after{color:rgba(255,100,200,.6);animation:glitch2 4s infinite;clip-path:polygon(0 60%,100% 60%,100% 75%,0 75%)}
-@keyframes glitch1{0%,94%,100%{transform:none;opacity:0}95%{transform:translateX(-4px);opacity:1}97%{transform:translateX(4px);opacity:1}99%{transform:none;opacity:0}}
-@keyframes glitch2{0%,96%,100%{transform:none;opacity:0}97%{transform:translateX(6px);opacity:1}99%{transform:translateX(-2px);opacity:.5}}
-.hero-h1 .w3{color:var(--cream);display:block}
+/* HOW */
+.how-sec{background:var(--bg2)}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.how-step{background:var(--bg);padding:36px 28px;position:relative}
+.how-step:first-child{border-radius:var(--r) 0 0 var(--r)}
+.how-step:last-child{border-radius:0 var(--r) var(--r) 0}
+.hs-num{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.hs-num::after{content:'';flex:1;height:1px;background:var(--border)}
+.hs-title{font-size:17px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
+.hs-desc{font-size:13px;color:var(--muted);line-height:1.6}
 
-/* sweep line */
-.hero-sweep{position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,207,255,.04),transparent);animation:sweep 3.5s ease-in-out infinite;pointer-events:none}
-@keyframes sweep{0%{left:-60%}100%{left:120%}}
-
-.hero-sub{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--muted);max-width:480px;margin:28px auto 44px;line-height:1.8;letter-spacing:.04em}
-.hero-sub span{color:var(--cyan)}
-
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.hbtn-p{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--bg);background:var(--cyan);padding:14px 36px;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;box-shadow:0 0 32px rgba(0,207,255,.3),0 0 64px rgba(0,207,255,.1);position:relative;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
-.hbtn-p:hover{background:#fff;box-shadow:0 0 48px rgba(0,207,255,.5)}
-.hbtn-s{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);background:transparent;padding:13px 36px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
-.hbtn-s:hover{border-color:var(--cyan);box-shadow:0 0 24px var(--cyan-dim);color:#fff}
-
-.hero-stats{display:flex;gap:0;margin-top:72px;border:1px solid var(--border);position:relative}
-.hero-stats::before{content:'';position:absolute;inset:-1px;box-shadow:0 0 24px var(--cyan-dim);pointer-events:none}
-.hstat{padding:20px 40px;border-right:1px solid var(--border);text-align:center}
-.hstat:last-child{border-right:none}
-.hstat-n{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;color:var(--cyan);display:block;text-shadow:0 0 20px rgba(0,207,255,.5);line-height:1}
-.hstat-l{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
-
-/* ── SECTION BASE ── */
-section{padding:100px 52px;position:relative;z-index:2}
-.inner{max-width:1200px;margin:0 auto}
-.ey{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px;opacity:.8}
-.sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(40px,6vw,76px);line-height:.9;letter-spacing:-.01em;text-transform:uppercase;margin-bottom:56px}
-.sec-title em{color:var(--cyan);font-style:normal;text-shadow:0 0 30px rgba(0,207,255,.3)}
-
-/* ── SERVICES ── */
-.srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
-.srv-card{background:var(--bg2);padding:40px 34px;position:relative;overflow:hidden;transition:background .3s;cursor:default}
-.srv-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,207,255,.08) 0%,transparent 60%);opacity:0;transition:opacity .3s}
-.srv-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--cyan),transparent);transform:scaleX(0);transition:transform .4s;box-shadow:0 0 16px var(--cyan)}
-.srv-card:hover::before{opacity:1}
-.srv-card:hover::after{transform:scaleX(1)}
-.srv-n{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2);margin-bottom:24px;display:block}
-.srv-icon{font-size:28px;margin-bottom:14px;display:block;filter:drop-shadow(0 0 8px var(--cyan-dim))}
-.srv-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;color:var(--cream);transition:color .3s}
-.srv-card:hover .srv-title{color:var(--cyan);text-shadow:0 0 20px rgba(0,207,255,.4)}
-.srv-desc{font-size:13px;color:var(--muted);line-height:1.7}
-
-/* ── WORK ── */
-.work-sec{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.work-item{display:grid;grid-template-columns:1fr 1fr;gap:60px;padding:56px 0;border-bottom:1px solid var(--border);align-items:center}
-.work-item:last-child{border-bottom:none}
-.wi-n{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2);margin-bottom:14px}
-.wi-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(32px,4vw,56px);letter-spacing:-.01em;text-transform:uppercase;line-height:.9;margin-bottom:20px}
-.wi-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
-.wi-tag{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 12px;border:1px solid var(--border2);color:var(--cyan);letter-spacing:.08em}
-.wi-link{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.12em;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color .2s;text-transform:uppercase}
-.wi-link:hover{color:var(--cyan)}
-.wi-link::after{content:'→';transition:transform .2s}
-.wi-link:hover::after{transform:translateX(4px)}
-
-/* PREVIEW MOCKUP */
-.wi-preview{background:#000;border:1px solid var(--border);border-radius:4px;aspect-ratio:16/9;overflow:hidden;position:relative;box-shadow:0 0 40px rgba(0,207,255,.08)}
-.wi-preview::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,207,255,.04) 0%,transparent 50%);z-index:1;pointer-events:none}
-.wi-preview-bar{height:26px;background:#060614;display:flex;align-items:center;padding:0 12px;gap:6px;border-bottom:1px solid var(--border)}
-.wi-dot{width:7px;height:7px;border-radius:50%}
-.wi-url{flex:1;margin:0 10px;height:14px;background:rgba(0,207,255,.06);border-radius:2px;border:1px solid var(--border)}
-.wi-body{padding:16px 14px;display:flex;flex-direction:column;gap:8px}
-.wi-line{height:7px;border-radius:2px;background:rgba(0,207,255,.08)}
-.wi-line.glow{background:rgba(0,207,255,.2);box-shadow:0 0 10px rgba(0,207,255,.2);width:45%}
-.wi-line.short{width:65%}
-.wi-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
-.wi-card-mini{height:40px;border-radius:3px;background:rgba(0,207,255,.05);border:1px solid var(--border)}
-.wi-card-mini:first-child{border-color:rgba(0,207,255,.3);box-shadow:0 0 12px rgba(0,207,255,.1)}
-
-/* ── HOW ── */
-.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
-.how-step{background:var(--bg2);padding:44px 32px;position:relative}
-.how-step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--cyan),transparent);opacity:0;transition:opacity .3s;box-shadow:0 0 16px var(--cyan)}
-.how-step:hover::before{opacity:1}
-.hs-n{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:.1em;margin-bottom:20px;opacity:.7}
-.hs-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;color:var(--cream)}
-.hs-desc{font-size:13px;color:var(--muted);line-height:1.7}
-
-/* ── TECH MARQUEE ── */
-.tech-sec{border-top:1px solid var(--border)}
-.marquee-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;margin:0 0 72px;background:rgba(0,207,255,.02)}
-.marquee{display:flex;animation:marquee 22s linear infinite}
+/* MARQUEE */
+.marquee-sec{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;background:var(--bg)}
+.marquee{display:flex;animation:marquee 24s linear infinite;user-select:none}
 .marquee:hover{animation-play-state:paused}
-.m-item{flex-shrink:0;padding:0 40px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);border-right:1px solid var(--border);white-space:nowrap;display:flex;align-items:center;gap:10px}
-.m-item .d{color:var(--cyan);font-size:8px}
+.m-item{flex-shrink:0;padding:0 36px;font-size:13px;font-weight:500;color:var(--light);letter-spacing:.04em;white-space:nowrap;border-right:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.m-item .dot{width:4px;height:4px;border-radius:50%;background:var(--accent)}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
-.tech-card{background:var(--bg2);padding:28px 24px;transition:background .2s;position:relative;overflow:hidden}
-.tech-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--cyan);transition:width .3s;box-shadow:0 0 10px var(--cyan)}
-.tech-card:hover::after{width:100%}
-.tc-icon{font-size:24px;margin-bottom:12px;display:block}
-.tc-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;color:var(--cream)}
-.tc-desc{font-size:12px;color:var(--muted);line-height:1.6}
+/* CTA */
+.cta-sec{background:linear-gradient(160deg,#001d3d 0%,#003180 50%,#0055b3 100%);padding:100px 24px;text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-eyebrow{font-size:13px;font-weight:500;color:rgba(255,255,255,.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px}
+.cta-title{font-size:clamp(40px,7vw,80px);font-weight:700;letter-spacing:-.04em;color:#fff;line-height:1.02;margin-bottom:20px;position:relative;z-index:1}
+.cta-sub{font-size:17px;color:rgba(255,255,255,.6);margin-bottom:40px;position:relative;z-index:1}
+.cta-btns{display:flex;gap:12px;justify-content:center;position:relative;z-index:1}
+.cta-btn-p{padding:14px 28px;background:#fff;color:#0066cc;border-radius:980px;font-size:15px;font-weight:600;text-decoration:none;transition:opacity .2s}
+.cta-btn-p:hover{opacity:.9}
+.cta-btn-s{padding:13px 28px;background:rgba(255,255,255,.12);color:#fff;border-radius:980px;font-size:15px;font-weight:500;text-decoration:none;backdrop-filter:blur(10px);transition:background .2s}
+.cta-btn-s:hover{background:rgba(255,255,255,.2)}
 
-/* ── CTA ── */
-.cta-sec{background:var(--bg2);border-top:1px solid var(--border);padding:100px 52px;text-align:center;position:relative;overflow:hidden}
-.cta-sec::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,207,255,.06) 0%,transparent 70%);pointer-events:none}
-.cta-sec::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,207,255,.1) 0%,transparent 70%);pointer-events:none}
-.cta-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;opacity:.7;position:relative;z-index:1}
-.cta-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(52px,9vw,110px);color:var(--cream);line-height:.9;letter-spacing:-.02em;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1}
-.cta-title em{color:var(--cyan);font-style:normal;text-shadow:0 0 60px rgba(0,207,255,.4)}
-.cta-sub{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:44px;letter-spacing:.08em;position:relative;z-index:1}
-.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
-
-/* ── FOOTER ── */
-footer{background:var(--bg);border-top:1px solid var(--border);padding:56px 52px 28px;position:relative;z-index:2}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:52px;margin-bottom:48px}
-.f-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.f-logo .dot{width:6px;height:6px;background:var(--cyan);transform:rotate(45deg);box-shadow:0 0 10px var(--cyan)}
-.f-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:240px}
-.f-col-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px;opacity:.7}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:52px 24px 28px}
+.footer-top{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:40px;border-bottom:1px solid var(--border)}
+.f-logo{font-size:17px;font-weight:700;letter-spacing:-.03em;margin-bottom:10px}
+.f-desc{font-size:13px;color:var(--light);line-height:1.6;max-width:220px}
+.f-col-title{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:14px;letter-spacing:.02em}
 .f-links{display:flex;flex-direction:column;gap:10px}
-.f-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;display:flex;align-items:center;gap:6px}
-.f-links a:hover{color:var(--cyan)}
-.f-links a:hover::before{content:'>';color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:10px}
-.footer-bot{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between}
-.f-copy{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted2);letter-spacing:.1em}
+.f-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s}
+.f-links a:hover{color:var(--accent)}
+.footer-bot{max-width:1080px;margin:24px auto 0;display:flex;justify-content:space-between;align-items:center}
+.f-copy{font-size:12px;color:var(--light)}
 
-/* ── REVEAL ── */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.1s}
-.reveal-delay-2{transition-delay:.2s}
-.reveal-delay-3{transition-delay:.3s}
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
 
-/* ── MOBILE ── */
+/* RESPONSIVE */
 @media(max-width:900px){
-  nav{padding:14px 20px}
   .nav-links{display:none}
-  section{padding:72px 20px}
-  .hero{padding:100px 20px 72px}
-  .hero-stats{flex-direction:column;width:100%}
-  .hstat{border-right:none;border-bottom:1px solid var(--border);padding:16px 24px}
-  .srv-grid,.how-steps,.tech-grid{grid-template-columns:1fr}
-  .work-item{grid-template-columns:1fr;gap:28px}
+  .srv-grid,.how-grid{grid-template-columns:1fr 1fr}
+  .work-grid{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr 1fr}
-  footer{padding:48px 20px 24px}
-  .hero-corner.tl,.hero-corner.tr,.hero-corner.bl,.hero-corner.br{display:none}
+  section{padding:72px 20px}
+  .hero-stats{gap:36px}
 }
 @media(max-width:600px){
-  .footer-top{grid-template-columns:1fr}
-  .cta-title{font-size:52px}
+  .srv-grid,.how-grid,.footer-top{grid-template-columns:1fr}
+  .hero-stats{flex-direction:column;gap:24px}
+  .srv-card:first-child,.srv-card:nth-child(3),.srv-card:nth-child(4),.srv-card:last-child{border-radius:0}
 }
 </style>
 </head>
 <body>
 
-<canvas id="tron-canvas"></canvas>
-<div class="scanlines"></div>
-
-<!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
-    <div class="dot"></div>
-    FORMA
-  </a>
+  <a href="#" class="nav-logo">Forma</a>
   <ul class="nav-links">
     <li><a href="#servizi">Servizi</a></li>
     <li><a href="#lavori">Lavori</a></li>
     <li><a href="#processo">Processo</a></li>
-    <li><a href="#tech">Stack</a></li>
   </ul>
-  <a href="#contatto" class="nav-cta">// Contatto</a>
+  <a href="#contatto" class="nav-cta">Contatto →</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-lines">
-    <div class="hero-line h h1"></div>
-    <div class="hero-line h h2"></div>
-    <div class="hero-line v v1"></div>
-    <div class="hero-line v v2"></div>
-  </div>
-  <div class="hero-corner tl"></div>
-  <div class="hero-corner tr"></div>
-  <div class="hero-corner bl"></div>
-  <div class="hero-corner br"></div>
-
-  <div class="hero-badge">Digital Studio · Ticino · est. 2024</div>
-
-  <h1 class="hero-h1">
-    <div class="hero-sweep"></div>
-    <span class="w1">Costruiamo</span>
-    <span class="w2" data-text="esperienze">esperienze</span>
-    <span class="w3">digitali.</span>
-  </h1>
-
-  <p class="hero-sub">
-    Siti, sistemi di prenotazione, click&nbsp;&amp;&nbsp;collect e molto altro.<br>
-    <span>Veloci. Affidabili. Su misura.</span>
-  </p>
-
+  <div class="hero-eyebrow">Digital Studio · Ticino</div>
+  <h1 class="hero-h1">Siti che <span>funzionano.</span><br>Sistemi che crescono.</h1>
+  <p class="hero-sub">Costruiamo esperienze digitali su misura — dal sito vetrina al sistema di prenotazione completo.</p>
   <div class="hero-btns">
-    <a href="#servizi" class="hbtn-p">Scopri i servizi</a>
-    <a href="#contatto" class="hbtn-s">// Parliamoci</a>
+    <a href="#servizi" class="btn-p">Scopri i servizi</a>
+    <a href="#contatto" class="btn-s">Parlaci del tuo progetto</a>
   </div>
-
   <div class="hero-stats">
-    <div class="hstat">
-      <span class="hstat-n">12+</span>
-      <div class="hstat-l">Progetti completati</div>
+    <div>
+      <span class="hs-n">12<span>+</span></span>
+      <div class="hs-l">Progetti completati</div>
     </div>
-    <div class="hstat">
-      <span class="hstat-n">48h</span>
-      <div class="hstat-l">Consegna media</div>
+    <div>
+      <span class="hs-n">48<span>h</span></span>
+      <div class="hs-l">Consegna media</div>
     </div>
-    <div class="hstat">
-      <span class="hstat-n">100%</span>
-      <div class="hstat-l">Clienti soddisfatti</div>
-    </div>
-    <div class="hstat">
-      <span class="hstat-n">24/7</span>
-      <div class="hstat-l">Uptime garantito</div>
+    <div>
+      <span class="hs-n">100<span>%</span></span>
+      <div class="hs-l">Clienti soddisfatti</div>
     </div>
   </div>
 </section>
 
 <!-- SERVICES -->
-<section id="servizi" style="padding-top:100px;padding-bottom:0">
+<section class="srv-sec" id="servizi">
   <div class="inner">
-    <div class="ey reveal">// 01 — Servizi</div>
-    <div class="sec-title reveal">Cosa<br><em>costruiamo</em></div>
-  </div>
-  <div class="inner">
+    <div class="section-eyebrow reveal">Servizi</div>
+    <div class="section-title reveal">Tutto quello<br>che ti serve.</div>
     <div class="srv-grid">
-      <div class="srv-card reveal">
-        <span class="srv-n">[ 01 ]</span>
-        <span class="srv-icon">🌐</span>
-        <div class="srv-title">Siti Web</div>
-        <p class="srv-desc">Design su misura, ottimizzato per mobile. Niente template — ogni sito è costruito da zero per raccontare la tua storia.</p>
-      </div>
-      <div class="srv-card reveal reveal-delay-1">
-        <span class="srv-n">[ 02 ]</span>
-        <span class="srv-icon">📅</span>
-        <div class="srv-title">Prenotazioni Automatizzate</div>
-        <p class="srv-desc">Chatbot integrato, planimetria interattiva, gestione tavoli e notifiche SMS. Zero telefonate, zero confusione.</p>
-      </div>
-      <div class="srv-card reveal reveal-delay-2">
-        <span class="srv-n">[ 03 ]</span>
-        <span class="srv-icon">📱</span>
-        <div class="srv-title">Menù Digitale</div>
-        <p class="srv-desc">Aggiornabile in tempo reale. Categorie, prezzi, disponibilità — tutto modificabile senza toccare il codice.</p>
-      </div>
-      <div class="srv-card reveal">
-        <span class="srv-n">[ 04 ]</span>
-        <span class="srv-icon">🛍️</span>
-        <div class="srv-title">Click &amp; Collect</div>
-        <p class="srv-desc">Sistema ordini completo: carrello, pagamento Stripe, pannello cucina live e tracking ordine per il cliente.</p>
-      </div>
-      <div class="srv-card reveal reveal-delay-1">
-        <span class="srv-n">[ 05 ]</span>
-        <span class="srv-icon">🗂️</span>
-        <div class="srv-title">Gestione Slot Orari</div>
-        <p class="srv-desc">Distribuzione automatica degli ordini per fascia oraria. La cucina non va mai in sovraccarico.</p>
-      </div>
-      <div class="srv-card reveal reveal-delay-2">
-        <span class="srv-n">[ 06 ]</span>
-        <span class="srv-icon">🗺️</span>
-        <div class="srv-title">Planimetria Interattiva</div>
-        <p class="srv-desc">Vista dall'alto del locale con tavoli cliccabili. Assegnazione posti in tempo reale, occupazione istantanea.</p>
-      </div>
+      <div class="srv-card reveal"><span class="srv-n">01</span><span class="srv-icon">🌐</span><div class="srv-title">Siti Web</div><p class="srv-desc">Design su misura, ottimizzato per mobile. Ogni sito costruito da zero per il tuo brand.</p><span class="srv-arrow">↗</span></div>
+      <div class="srv-card reveal reveal-d1"><span class="srv-n">02</span><span class="srv-icon">📅</span><div class="srv-title">Prenotazioni</div><p class="srv-desc">Chatbot integrato, planimetria interattiva, tavoli, notifiche SMS. Zero telefonate.</p><span class="srv-arrow">↗</span></div>
+      <div class="srv-card reveal reveal-d2"><span class="srv-n">03</span><span class="srv-icon">📱</span><div class="srv-title">Menù Digitale</div><p class="srv-desc">Aggiornabile in tempo reale dall'admin. Categorie, prezzi e disponibilità sempre freschi.</p><span class="srv-arrow">↗</span></div>
+      <div class="srv-card reveal"><span class="srv-n">04</span><span class="srv-icon">🛍️</span><div class="srv-title">Click &amp; Collect</div><p class="srv-desc">Ordini online completi — carrello, Stripe, pannello cucina live, tracking cliente.</p><span class="srv-arrow">↗</span></div>
+      <div class="srv-card reveal reveal-d1"><span class="srv-n">05</span><span class="srv-icon">🗂️</span><div class="srv-title">Slot Orari</div><p class="srv-desc">Distribuzione automatica degli ordini per fascia. Cucina mai in sovraccarico.</p><span class="srv-arrow">↗</span></div>
+      <div class="srv-card reveal reveal-d2"><span class="srv-n">06</span><span class="srv-icon">🗺️</span><div class="srv-title">Planimetria</div><p class="srv-desc">Vista dall'alto del locale, tavoli interattivi, occupazione in tempo reale.</p><span class="srv-arrow">↗</span></div>
     </div>
   </div>
 </section>
 
 <!-- WORK -->
-<section class="work-sec" id="lavori">
+<section id="lavori">
   <div class="inner">
-    <div class="ey reveal">// 02 — Case Studies</div>
-    <div class="sec-title reveal">Lavori<br><em>recenti</em></div>
-
-    <div class="work-item reveal">
-      <div>
-        <div class="wi-n">[ PROJECT_01 ] — Ristorante</div>
-        <div class="wi-title">La Griglia<br>Dal 1994</div>
-        <div class="wi-tags">
-          <span class="wi-tag">Sito vetrina</span>
-          <span class="wi-tag">Prenotazioni</span>
-          <span class="wi-tag">Menù digitale</span>
-          <span class="wi-tag">Planimetria</span>
-          <span class="wi-tag">Chatbot</span>
-        </div>
-        <a href="#" class="wi-link">Vedi il progetto</a>
-      </div>
-      <div class="wi-preview">
-        <div class="wi-preview-bar">
-          <div class="wi-dot" style="background:#ff5f57"></div>
-          <div class="wi-dot" style="background:#febc2e"></div>
-          <div class="wi-dot" style="background:#28c840"></div>
-          <div class="wi-url"></div>
-        </div>
-        <div style="background:#0a0a0a;padding:10px 14px 0;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#f5f0e8;letter-spacing:.08em;border-bottom:1px solid rgba(0,207,255,.1)">
-          LA GRIGLIA <span style="color:rgba(139,26,42,.8);font-size:11px">● DAL 1994</span>
-        </div>
-        <div class="wi-body">
-          <div class="wi-line glow"></div>
-          <div class="wi-line short"></div>
-          <div class="wi-line" style="width:80%"></div>
-          <div class="wi-cards">
-            <div class="wi-card-mini"></div>
-            <div class="wi-card-mini"></div>
-            <div class="wi-card-mini"></div>
+    <div class="section-eyebrow reveal">Lavori recenti</div>
+    <div class="section-title reveal">Progetti<br>che parlano.</div>
+    <div class="work-grid">
+      <div class="work-card reveal">
+        <div class="wc-preview">
+          <div class="wc-screen">
+            <div class="wcs-bar"><div class="wcs-dot" style="background:#ff5f57"></div><div class="wcs-dot" style="background:#febc2e"></div><div class="wcs-dot" style="background:#28c840"></div></div>
+            <div style="background:#0a0a0a;padding:8px 12px;font-size:11px;font-weight:800;color:#f5f0e8;letter-spacing:.06em">LA GRIGLIA · DAL 1994</div>
+            <div class="wcs-body">
+              <div class="wcs-line" style="width:50%;background:rgba(139,26,42,.3)"></div>
+              <div class="wcs-line" style="width:80%"></div>
+              <div class="wcs-line" style="width:65%"></div>
+              <div class="wcs-grid"><div class="wcs-block"></div><div class="wcs-block"></div><div class="wcs-block"></div></div>
+            </div>
           </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-meta">
+          <div class="wc-cat">Ristorante · Taverne TI</div>
+          <div class="wc-title">La Griglia Dal 1994</div>
+          <div class="wc-tags"><span class="wc-tag">Sito vetrina</span><span class="wc-tag">Prenotazioni</span><span class="wc-tag">Menù</span></div>
+        </div>
+      </div>
+      <div class="work-card reveal reveal-d1">
+        <div class="wc-preview" style="background:#f0f4ff">
+          <div class="wc-screen">
+            <div class="wcs-bar"><div class="wcs-dot" style="background:#ff5f57"></div><div class="wcs-dot" style="background:#febc2e"></div><div class="wcs-dot" style="background:#28c840"></div></div>
+            <div class="wcs-body">
+              <div style="display:flex;gap:4px;margin-bottom:4px"><div style="flex:1;height:20px;border-radius:10px;background:rgba(0,102,204,.15)"></div><div style="flex:1;height:20px;border-radius:10px;background:rgba(0,0,0,.05)"></div></div>
+              <div class="wcs-line" style="width:70%"></div>
+              <div class="wcs-grid"><div class="wcs-block"></div><div class="wcs-block" style="background:rgba(0,102,204,.1)"></div><div class="wcs-block"></div></div>
+              <div style="height:22px;border-radius:10px;background:rgba(0,102,204,.15);margin-top:4px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wc-overlay"></div>
+        <div class="wc-meta">
+          <div class="wc-cat">Sistema Ordini</div>
+          <div class="wc-title">Click &amp; Collect Pro</div>
+          <div class="wc-tags"><span class="wc-tag">Ordini online</span><span class="wc-tag">Stripe</span><span class="wc-tag">Cucina live</span></div>
         </div>
       </div>
     </div>
-
-    <div class="work-item reveal">
-      <div>
-        <div class="wi-n">[ PROJECT_02 ] — Sistema Ordini</div>
-        <div class="wi-title">Click &amp; Collect<br>System</div>
-        <div class="wi-tags">
-          <span class="wi-tag">Ordini online</span>
-          <span class="wi-tag">Stripe</span>
-          <span class="wi-tag">Pannello cucina</span>
-          <span class="wi-tag">SMS notifiche</span>
-          <span class="wi-tag">Zone consegna</span>
-        </div>
-        <a href="#" class="wi-link">Vedi il progetto</a>
-      </div>
-      <div class="wi-preview">
-        <div class="wi-preview-bar">
-          <div class="wi-dot" style="background:#ff5f57"></div>
-          <div class="wi-dot" style="background:#febc2e"></div>
-          <div class="wi-dot" style="background:#28c840"></div>
-          <div class="wi-url"></div>
-        </div>
-        <div class="wi-body">
-          <div style="display:flex;gap:6px;margin-bottom:6px">
-            <div style="flex:1;height:24px;background:rgba(0,207,255,.12);border-radius:3px;border:1px solid rgba(0,207,255,.25);box-shadow:0 0 10px rgba(0,207,255,.08)"></div>
-            <div style="flex:1;height:24px;background:rgba(0,207,255,.04);border-radius:3px;border:1px solid var(--border)"></div>
-          </div>
-          <div class="wi-line" style="width:70%"></div>
-          <div class="wi-cards">
-            <div class="wi-card-mini"></div>
-            <div class="wi-card-mini"></div>
-            <div class="wi-card-mini" style="border-color:rgba(0,207,255,.3);box-shadow:0 0 10px rgba(0,207,255,.1)"></div>
-          </div>
-          <div style="height:28px;background:rgba(0,207,255,.1);border-radius:3px;margin-top:6px;border:1px solid rgba(0,207,255,.2);box-shadow:0 0 12px rgba(0,207,255,.08)"></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
+
+<!-- MARQUEE -->
+<div class="marquee-sec">
+  <div class="marquee">
+    <div class="m-item"><span class="dot"></span>Vercel</div><div class="m-item"><span class="dot"></span>Turso DB</div><div class="m-item"><span class="dot"></span>Stripe</div><div class="m-item"><span class="dot"></span>Twilio SMS</div><div class="m-item"><span class="dot"></span>Google Maps</div><div class="m-item"><span class="dot"></span>Node.js</div><div class="m-item"><span class="dot"></span>Firebase</div><div class="m-item"><span class="dot"></span>Resend Email</div>
+    <div class="m-item"><span class="dot"></span>Vercel</div><div class="m-item"><span class="dot"></span>Turso DB</div><div class="m-item"><span class="dot"></span>Stripe</div><div class="m-item"><span class="dot"></span>Twilio SMS</div><div class="m-item"><span class="dot"></span>Google Maps</div><div class="m-item"><span class="dot"></span>Node.js</div><div class="m-item"><span class="dot"></span>Firebase</div><div class="m-item"><span class="dot"></span>Resend Email</div>
+  </div>
+</div>
 
 <!-- HOW -->
-<section id="processo" style="padding-bottom:0">
+<section class="how-sec" id="processo">
   <div class="inner">
-    <div class="ey reveal">// 03 — Processo</div>
-    <div class="sec-title reveal">Come<br><em>lavoriamo</em></div>
-  </div>
-  <div class="inner">
-    <div class="how-steps">
-      <div class="how-step reveal">
-        <div class="hs-n">[ STEP_01 ]</div>
-        <div class="hs-title">Ascolto</div>
-        <p class="hs-desc">Capiamo il tuo business, i tuoi clienti e i problemi reali. Niente soluzioni preconfezionate.</p>
-      </div>
-      <div class="how-step reveal reveal-delay-1">
-        <div class="hs-n">[ STEP_02 ]</div>
-        <div class="hs-title">Design</div>
-        <p class="hs-desc">Prototipo visivo prima del codice. Vedi esattamente il risultato finale e approvi ogni dettaglio.</p>
-      </div>
-      <div class="how-step reveal reveal-delay-2">
-        <div class="hs-n">[ STEP_03 ]</div>
-        <div class="hs-title">Sviluppo</div>
-        <p class="hs-desc">Costruiamo veloce e bene. Deploy su Vercel, database cloud, scalabile dal primo giorno.</p>
-      </div>
-      <div class="how-step reveal reveal-delay-3">
-        <div class="hs-n">[ STEP_04 ]</div>
-        <div class="hs-title">Supporto</div>
-        <p class="hs-desc">Non sparisci dopo la consegna. Disponibili per modifiche, aggiornamenti e nuove funzionalità.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TECH -->
-<section class="tech-sec" id="tech">
-  <div class="inner">
-    <div class="ey reveal">// 04 — Stack</div>
-    <div class="sec-title reveal">Tecnologie<br><em>moderne</em></div>
-  </div>
-  <div class="marquee-wrap">
-    <div class="marquee">
-      <div class="m-item"><span class="d">◆</span>Vercel</div>
-      <div class="m-item"><span class="d">◆</span>Turso DB</div>
-      <div class="m-item"><span class="d">◆</span>Stripe</div>
-      <div class="m-item"><span class="d">◆</span>Twilio SMS</div>
-      <div class="m-item"><span class="d">◆</span>Google Maps API</div>
-      <div class="m-item"><span class="d">◆</span>Node.js</div>
-      <div class="m-item"><span class="d">◆</span>Firebase</div>
-      <div class="m-item"><span class="d">◆</span>Vanilla JS</div>
-      <div class="m-item"><span class="d">◆</span>Resend Email</div>
-      <div class="m-item"><span class="d">◆</span>Vercel</div>
-      <div class="m-item"><span class="d">◆</span>Turso DB</div>
-      <div class="m-item"><span class="d">◆</span>Stripe</div>
-      <div class="m-item"><span class="d">◆</span>Twilio SMS</div>
-      <div class="m-item"><span class="d">◆</span>Google Maps API</div>
-      <div class="m-item"><span class="d">◆</span>Node.js</div>
-      <div class="m-item"><span class="d">◆</span>Firebase</div>
-      <div class="m-item"><span class="d">◆</span>Vanilla JS</div>
-      <div class="m-item"><span class="d">◆</span>Resend Email</div>
-    </div>
-  </div>
-  <div class="inner">
-    <div class="tech-grid">
-      <div class="tech-card reveal">
-        <div class="tc-icon">⚡</div>
-        <div class="tc-name">Deploy istantaneo</div>
-        <p class="tc-desc">Vercel garantisce deploy in secondi e uptime 99.99% a livello globale.</p>
-      </div>
-      <div class="tech-card reveal reveal-delay-1">
-        <div class="tc-icon">🔒</div>
-        <div class="tc-name">Pagamenti sicuri</div>
-        <p class="tc-desc">Stripe gestisce ogni transazione. Zero dati carta memorizzati sui nostri server.</p>
-      </div>
-      <div class="tech-card reveal reveal-delay-2">
-        <div class="tc-icon">📲</div>
-        <div class="tc-name">Notifiche real-time</div>
-        <p class="tc-desc">SMS via Twilio, email via Resend. Il cliente sempre aggiornato in tempo reale.</p>
-      </div>
-      <div class="tech-card reveal reveal-delay-3">
-        <div class="tc-icon">🗄️</div>
-        <div class="tc-name">Database cloud</div>
-        <p class="tc-desc">Turso SQLite distribuito — veloce, affidabile, scalabile. Dati sempre disponibili.</p>
-      </div>
+    <div class="section-eyebrow reveal">Processo</div>
+    <div class="section-title reveal">Semplice,<br>trasparente.</div>
+    <div class="how-grid">
+      <div class="how-step reveal"><div class="hs-num">01</div><div class="hs-title">Ascolto</div><p class="hs-desc">Capiamo il tuo business e i problemi reali. Niente soluzioni preconfezionate.</p></div>
+      <div class="how-step reveal reveal-d1"><div class="hs-num">02</div><div class="hs-title">Design</div><p class="hs-desc">Prototipo visivo prima del codice. Approvi ogni dettaglio prima che iniziamo.</p></div>
+      <div class="how-step reveal reveal-d2"><div class="hs-num">03</div><div class="hs-title">Sviluppo</div><p class="hs-desc">Veloce e solido. Deploy su Vercel, database cloud, scalabile dal giorno uno.</p></div>
+      <div class="how-step reveal reveal-d3"><div class="hs-num">04</div><div class="hs-title">Supporto</div><p class="hs-desc">Non sparisci dopo la consegna. Sempre disponibili per aggiornamenti e nuove funzioni.</p></div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
 <section class="cta-sec" id="contatto">
-  <div class="cta-tag">// Inizia oggi</div>
-  <div class="cta-title">Costruiamo<br><em>insieme</em></div>
-  <p class="cta-sub">Raccontaci il tuo progetto — rispondiamo entro 24 ore.</p>
+  <div class="cta-eyebrow">Inizia oggi</div>
+  <div class="cta-title">Il tuo progetto<br>ci aspetta.</div>
+  <p class="cta-sub">Raccontaci cosa vuoi costruire — rispondiamo entro 24 ore.</p>
   <div class="cta-btns">
-    <a href="mailto:ciao@forma.studio" class="hbtn-p">✉ Scrivici</a>
-    <a href="tel:+41000000000" class="hbtn-s">// Chiamaci</a>
+    <a href="mailto:ciao@forma.studio" class="cta-btn-p">Scrivici</a>
+    <a href="tel:+41000000000" class="cta-btn-s">Chiamaci</a>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div style="max-width:1200px;margin:0 auto">
-    <div class="footer-top">
-      <div>
-        <div class="f-logo"><div class="dot"></div>FORMA</div>
-        <p class="f-desc">Digital studio con base in Ticino. Siti e sistemi digitali per ristoranti e piccole imprese.</p>
-      </div>
-      <div>
-        <div class="f-col-title">// Servizi</div>
-        <div class="f-links">
-          <a href="#">Siti web</a>
-          <a href="#">Prenotazioni</a>
-          <a href="#">Click &amp; Collect</a>
-          <a href="#">Menù digitale</a>
-          <a href="#">Planimetria</a>
-        </div>
-      </div>
-      <div>
-        <div class="f-col-title">// Studio</div>
-        <div class="f-links">
-          <a href="#">Chi siamo</a>
-          <a href="#">Lavori</a>
-          <a href="#">Processo</a>
-          <a href="#">Contatto</a>
-        </div>
-      </div>
-      <div>
-        <div class="f-col-title">// Contatti</div>
-        <div class="f-links">
-          <a href="mailto:ciao@forma.studio">ciao@forma.studio</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-          <a href="#">Ticino, Svizzera</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bot">
-      <span class="f-copy">© 2024 FORMA DIGITAL STUDIO — TICINO</span>
-      <span class="f-copy" style="color:rgba(0,207,255,.3)">SYSTEM_ONLINE ◆ ALL_RIGHTS_RESERVED</span>
-    </div>
+  <div class="footer-top">
+    <div><div class="f-logo">Forma</div><p class="f-desc">Digital studio con base in Ticino. Siti e sistemi digitali per ristoranti e piccole imprese.</p></div>
+    <div><div class="f-col-title">Servizi</div><div class="f-links"><a href="#">Siti web</a><a href="#">Prenotazioni</a><a href="#">Click & Collect</a><a href="#">Menù digitale</a></div></div>
+    <div><div class="f-col-title">Studio</div><div class="f-links"><a href="#">Chi siamo</a><a href="#">Lavori</a><a href="#">Contatto</a></div></div>
+    <div><div class="f-col-title">Contatti</div><div class="f-links"><a href="mailto:ciao@forma.studio">ciao@forma.studio</a><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">Ticino, Svizzera</a></div></div>
+  </div>
+  <div class="footer-bot">
+    <span class="f-copy">© 2024 Forma Digital Studio</span>
+    <span class="f-copy">Fatto con cura · Ticino</span>
   </div>
 </footer>
 
 <script>
-/* ── TRON CANVAS ─────────────────────────────────────────── */
-(function(){
-  const canvas = document.getElementById('tron-canvas');
-  const ctx = canvas.getContext('2d');
-  const CYAN = '#00CFFF';
-  const GRID = 48;
-
-  function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Light trails
-  const trails = [];
-  const MAX_TRAILS = 14;
-
-  function spawnTrail(){
-    const horiz = Math.random() > .5;
-    const len = GRID * (4 + Math.floor(Math.random() * 10));
-    const speed = 2.5 + Math.random() * 3.5;
-    if(horiz){
-      const row = Math.floor(Math.random() * (canvas.height / GRID)) * GRID;
-      const dir = Math.random() > .5 ? 1 : -1;
-      const startX = dir > 0 ? -len : canvas.width + len;
-      trails.push({ x: startX, y: row, dx: speed * dir, dy: 0, len, life: 1 });
-    } else {
-      const col = Math.floor(Math.random() * (canvas.width / GRID)) * GRID;
-      const dir = Math.random() > .5 ? 1 : -1;
-      const startY = dir > 0 ? -len : canvas.height + len;
-      trails.push({ x: col, y: startY, dx: 0, dy: speed * dir, len, life: 1 });
-    }
-  }
-
-  // Grid nodes (intersection dots)
-  const nodes = [];
-  function initNodes(){
-    nodes.length = 0;
-    for(let x = 0; x < canvas.width + GRID; x += GRID){
-      for(let y = 0; y < canvas.height + GRID; y += GRID){
-        if(Math.random() < .04){
-          nodes.push({ x, y, pulse: Math.random() * Math.PI * 2, speed: .02 + Math.random() * .03 });
-        }
-      }
-    }
-  }
-  initNodes();
-  window.addEventListener('resize', initNodes);
-
-  let frame = 0;
-
-  function draw(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Grid
-    ctx.strokeStyle = 'rgba(0,207,255,0.05)';
-    ctx.lineWidth = 1;
-    for(let x = 0; x < canvas.width; x += GRID){
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, canvas.height); ctx.stroke();
-    }
-    for(let y = 0; y < canvas.height; y += GRID){
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width, y); ctx.stroke();
-    }
-
-    // Nodes pulse
-    nodes.forEach(n => {
-      n.pulse += n.speed;
-      const a = (.3 + .7 * Math.sin(n.pulse)) * .5;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,207,255,${a})`;
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = CYAN;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    });
-
-    // Spawn trails
-    if(frame % 40 === 0 && trails.length < MAX_TRAILS) spawnTrail();
-
-    // Draw trails
-    for(let i = trails.length - 1; i >= 0; i--){
-      const t = trails[i];
-      t.x += t.dx;
-      t.y += t.dy;
-
-      // head glow
-      const grd = ctx.createLinearGradient(
-        t.x - t.dx * t.len / Math.abs(t.dx || t.dy),
-        t.y - t.dy * t.len / Math.abs(t.dx || t.dy),
-        t.x, t.y
-      );
-      grd.addColorStop(0, 'rgba(0,207,255,0)');
-      grd.addColorStop(.7, 'rgba(0,207,255,.15)');
-      grd.addColorStop(1, 'rgba(0,207,255,.9)');
-
-      ctx.beginPath();
-      ctx.moveTo(
-        t.x - t.dx * t.len / (Math.abs(t.dx) || Math.abs(t.dy)),
-        t.y - t.dy * t.len / (Math.abs(t.dx) || Math.abs(t.dy))
-      );
-      ctx.lineTo(t.x, t.y);
-      ctx.strokeStyle = grd;
-      ctx.lineWidth = 1.5;
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = CYAN;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // head dot
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 2.5, 0, Math.PI*2);
-      ctx.fillStyle = '#fff';
-      ctx.shadowBlur = 16;
-      ctx.shadowColor = CYAN;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // remove off-screen
-      if(t.x < -200 || t.x > canvas.width+200 || t.y < -200 || t.y > canvas.height+200){
-        trails.splice(i,1);
-      }
-    }
-
-    frame++;
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-/* ── REVEAL ── */
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
-},{threshold:.1});
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-/* ── FLICKER on load ── */
-setTimeout(()=>{
-  const w2 = document.querySelector('.hero-h1 .w2');
-  if(!w2) return;
-  let i = 0;
-  const flicker = () => {
-    w2.style.opacity = Math.random() > .15 ? '1' : '0.3';
-    if(i++ < 8) setTimeout(flicker, 60);
-    else w2.style.opacity = '1';
-  };
-  flicker();
-}, 400);
 </script>
 </body>
 </html>
